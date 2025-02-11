@@ -1,0 +1,89 @@
+import { useForm } from "react-hook-form";
+import {
+  Container,
+  Title,
+  LoginBox,
+  LeftSide,
+  RightSide,
+  Input,
+  Button,
+  FormWrapper,
+  ErrorMessage
+} from "./CadastroStyle";
+import logo from "../../assets/logo.jpeg";
+
+function Cadastro() {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+  
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+
+  return (
+    <Container>
+      <LoginBox>
+        <LeftSide>
+          <img src={logo} alt="Logo" width="300" />
+        </LeftSide>
+        <RightSide>
+          <Title>Cadastro</Title>
+          <FormWrapper>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Input
+                type="text"
+                placeholder="Usuário"
+                {...register("username")}
+                required
+              />
+              <Input
+  type="email"
+  placeholder="E-mail"
+  {...register("email", {
+    required: "O e-mail é obrigatório",  // Verifica se o campo foi preenchido
+    pattern: {
+      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,  // Expressão regular para validar o formato do e-mail
+      message: "Por favor, insira um e-mail válido"  // Mensagem de erro para e-mail inválido
+    }
+  })}
+  required
+/>
+{errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+              <Input 
+          type="tel" 
+          placeholder="Telefone" 
+          {...register("phone", {
+            required: "O telefone é obrigatório",
+            pattern: {
+                value: /^(\\([1-9]{2}\\)\\s?)?([9]{1}[6-9]{1}[0-9]{3}\\-?[0-9]{4})$/,
+              message: "O número de telefone não é válido. Exemplo: (XX) XXXXX-XXXX"
+            }
+          })} 
+        />
+        {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>} {/* Exibe o feedback de erro */}
+             <Input 
+          type="password" 
+          placeholder="Senha" 
+          {...register("password", {
+            required: "A senha é obrigatória",
+            minLength: {
+              value: 8,
+              message: "A senha deve ter pelo menos 8 caracteres"
+            },
+            pattern: {
+              value: /(?=.*\d)/,
+              message: "A senha deve conter pelo menos um número"
+            }
+          })} 
+        />
+        {errors.password &&  <ErrorMessage>{errors.password.message}</ErrorMessage>} {/* Exibe o feedback de erro */}
+              <Button type="submit">Cadastrar</Button>
+            </form>
+          </FormWrapper>
+        </RightSide>
+      </LoginBox>
+    </Container>
+  );
+}
+
+export default Cadastro;
