@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Title,
@@ -14,9 +16,28 @@ import logo from "../../assets/logo.jpeg";
 
 function Cadastro() {
     const { register, handleSubmit, formState: { errors } } = useForm();
-  
-  const onSubmit = (data) => {
-    console.log(data);
+    // eslint-disable-next-line no-unused-vars
+    const [error, setError] = useState(""); // Estado para exibir erros da API
+    const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao cadastrar. Verifique os dados e tente novamente.");
+      }
+
+      const result = await response.json();
+      console.log("Resposta do backend:", result); 
+      alert("Cadastro realizado com sucesso! Faça login para continuar.");
+      navigate("/login"); // Redireciona para a tela de login
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
 

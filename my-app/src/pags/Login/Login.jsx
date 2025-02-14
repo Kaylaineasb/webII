@@ -1,12 +1,31 @@
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Container, Title, LoginBox, LeftSide, RightSide, Input, Button, FormWrapper } from './LoginStyle';
 import logo from '../../assets/logo.jpeg';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 const Login = () => {
   const { register, handleSubmit } = useForm();
-  
-  const onSubmit = (data) => {
-    console.log(data);
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Usuário ou senha inválidos");
+      }
+
+      const result = await response.json();
+      localStorage.setItem("token", result.token); // Armazena o token
+      navigate("/teste"); // Redireciona para a página principal
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
