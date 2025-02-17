@@ -1,4 +1,4 @@
-import { Button, Container, Input, InputGroup, ListaAparelhos, Select, Categoria, Ul, Menu, MenuLinks, MenuLogo, Wrapper } from "./Teste";
+import { Button, Container, Input, InputGroup, ListaAparelhos, Select, Categoria, Ul, Menu, MenuLinks, MenuLogo, Wrapper } from "./TesteStyle";
 import { useState } from "react";
 import Logo from '../../assets/logo.jpeg';
 

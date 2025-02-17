@@ -65,7 +65,7 @@ export const Input = styled.input`
 `;
 
 export const Button = styled.button`
-  width: 105%;
+  width: 100%;
   padding: 10px;
   background: #d9534f;
   color: white;

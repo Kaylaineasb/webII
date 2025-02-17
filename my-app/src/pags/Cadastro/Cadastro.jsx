@@ -21,7 +21,7 @@ function Cadastro() {
     const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("http://localhost:4200", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -70,18 +70,6 @@ function Cadastro() {
   required
 />
 {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-              <Input 
-          type="tel" 
-          placeholder="Telefone" 
-          {...register("phone", {
-            required: "O telefone é obrigatório",
-            pattern: {
-                value: /^(\\([1-9]{2}\\)\\s?)?([9]{1}[6-9]{1}[0-9]{3}\\-?[0-9]{4})$/,
-              message: "O número de telefone não é válido. Exemplo: (XX) XXXXX-XXXX"
-            }
-          })} 
-        />
-        {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>} {/* Exibe o feedback de erro */}
              <Input 
           type="password" 
           placeholder="Senha" 
