@@ -2,26 +2,33 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Container, Title, LoginBox, LeftSide, RightSide, Input, Button, FormWrapper } from './LoginStyle';
 import logo from '../../assets/logo.jpeg';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
+
 const Login = () => {
   const { register, handleSubmit } = useForm();
-  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://localhost:5035/api/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          email: data.email, // Alterado para email
+          senha: data.senha // Alterado para senha
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Usuário ou senha inválidos");
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Erro ao fazer login");
       }
 
       const result = await response.json();
-      localStorage.setItem("token", result.token); // Armazena o token
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("usuario", result.nome); // Armazena nome do usuário
+
       navigate("/teste"); // Redireciona para a página principal
     } catch (error) {
       setError(error.message);
@@ -32,19 +39,19 @@ const Login = () => {
     <Container>
       <LoginBox>
         <LeftSide>
-          <img src={logo} alt='Logo' width='300' />
+          <img src={logo} alt="Logo" width="300" />
         </LeftSide>
         <RightSide>
-        <Title>Login</Title>
+          <Title>Login</Title>
           <FormWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Input type='text' placeholder='Usuário' {...register('username')} required/>
-              <Input type='password' placeholder='Senha' {...register('password')} required/>
-              <Button type='submit'>Entrar</Button>
+              <Input type="email" placeholder="E-mail" {...register('email')} required />
+              <Input type="password" placeholder="Senha" {...register('senha')} required />
+              <Button type="submit">Entrar</Button>
             </form>
+            {error && <p style={{ color: "red" }}>{error}</p>}
           </FormWrapper>
-          <p> Não tem uma conta?{' '}
-          <Link to="/cadastro">Cadastre-se aqui!</Link> </p>
+          <p> Não tem uma conta? <Link to="/cadastro">Cadastre-se aqui!</Link> </p>
         </RightSide>
       </LoginBox>
     </Container>
