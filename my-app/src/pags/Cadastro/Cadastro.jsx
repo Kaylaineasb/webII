@@ -21,7 +21,7 @@ function Cadastro() {
     const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:4200", {
+      const response = await fetch("http://192.168.189.127:5035/api/usuarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

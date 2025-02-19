@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://192.168.189.127:5035/api/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -38,8 +38,8 @@ const Login = () => {
         <Title>Login</Title>
           <FormWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Input type='text' placeholder='Usuário' {...register('username')} required/>
-              <Input type='password' placeholder='Senha' {...register('password')} required/>
+              <Input type='text' placeholder='Email' {...register('email')} required/>
+              <Input type='password' placeholder='Senha' {...register('senha')} required/>
               <Button type='submit'>Entrar</Button>
             </form>
           </FormWrapper>
