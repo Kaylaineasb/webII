@@ -12,13 +12,22 @@ import {
   MenuLogo, 
   Wrapper 
 } from "./TesteStyle";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Logo from '../../assets/logo.jpeg';
 
 const Teste = () => {
   const [aparelhos, setAparelhos] = useState([]);
   const [novoAparelho, setNovoAparelho] = useState({ nome: "", categoria: "" });
   const categorias = ["Superiores", "Inferiores", "Cardio"];
+  const [usuario, setUsuario] = useState("");
+
+  useEffect(() => {
+    // Recupera o nome do usuário do localStorage
+    const nomeUsuario = localStorage.getItem("usuario");
+    if (nomeUsuario) {
+      setUsuario(nomeUsuario); // Atualiza o estado com o nome do usuário
+    }
+  }, []);
 
   const adicionarAparelho = () => {
     if (novoAparelho.nome && novoAparelho.categoria) {
@@ -39,6 +48,7 @@ const Teste = () => {
       </Menu>
       <Wrapper>
         <h2>Gestão de Aparelhos</h2>
+        {usuario && <h3>Oi, {usuario}, Bem vindo de volta!</h3>}
         <InputGroup>
           <Input
             type="text"

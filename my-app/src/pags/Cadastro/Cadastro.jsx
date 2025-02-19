@@ -35,6 +35,7 @@ function Cadastro() {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || "Erro ao cadastrar. Verifique os dados.");
       }
+      localStorage.setItem("usuario", data.nome); 
 
       alert("Cadastro realizado com sucesso! Faça login para continuar.");
       navigate("/login"); 
