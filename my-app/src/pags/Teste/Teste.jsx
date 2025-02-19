@@ -14,20 +14,29 @@ import {
 } from "./TesteStyle";
 import { useState,useEffect } from "react";
 import Logo from '../../assets/logo.jpeg';
+import { useNavigate } from "react-router-dom";
 
 const Teste = () => {
   const [aparelhos, setAparelhos] = useState([]);
   const [novoAparelho, setNovoAparelho] = useState({ nome: "", categoria: "" });
-  const categorias = ["Superiores", "Inferiores", "Cardio"];
+  const navigate = useNavigate();
   const [usuario, setUsuario] = useState("");
+  const categorias = ["Superiores", "Inferiores", "Cardio"];
 
   useEffect(() => {
+    // Verifica se o token está presente no localStorage
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      // Se não encontrar o token, redireciona para a tela de login
+      navigate("/login");
+    }
     // Recupera o nome do usuário do localStorage
     const nomeUsuario = localStorage.getItem("usuario");
     if (nomeUsuario) {
       setUsuario(nomeUsuario); // Atualiza o estado com o nome do usuário
     }
-  }, []);
+  }, [navigate]);
 
   const adicionarAparelho = () => {
     if (novoAparelho.nome && novoAparelho.categoria) {
