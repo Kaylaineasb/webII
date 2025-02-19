@@ -25,9 +25,9 @@ function Cadastro() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nome: data.nome, // Alterado para 'nome'
+          nome: data.nome, 
           email: data.email,
-          senha: data.senha // Alterado para 'senha'
+          senha: data.senha 
         }),
       });
 
@@ -37,7 +37,7 @@ function Cadastro() {
       }
 
       alert("Cadastro realizado com sucesso! Faça login para continuar.");
-      navigate("/login"); // Redireciona para a tela de login
+      navigate("/login"); 
     } catch (err) {
       setError(err.message);
     }

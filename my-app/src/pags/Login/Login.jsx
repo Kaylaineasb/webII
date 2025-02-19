@@ -45,15 +45,9 @@ const Login = () => {
           <Title>Login</Title>
           <FormWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
-<<<<<<< HEAD
-              <Input type='text' placeholder='Email' {...register('email')} required/>
-              <Input type='password' placeholder='Senha' {...register('senha')} required/>
-              <Button type='submit'>Entrar</Button>
-=======
               <Input type="email" placeholder="E-mail" {...register('email')} required />
               <Input type="password" placeholder="Senha" {...register('senha')} required />
               <Button type="submit">Entrar</Button>
->>>>>>> 843004fc943b27e5efa6f506b6a2c697f4a23ba2
             </form>
             {error && <p style={{ color: "red" }}>{error}</p>}
           </FormWrapper>
