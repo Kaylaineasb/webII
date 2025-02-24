@@ -27,7 +27,8 @@ const Login = () => {
 
       const result = await response.json();
       localStorage.setItem("token", result.token);
-      localStorage.setItem("usuario", result.nome); // Armazena nome do usuário
+      localStorage.setItem("usuario", result.nome); 
+      localStorage.setItem("usuarioId",result.usuarioId);
 
       navigate("/teste"); // Redireciona para a página principal
     } catch (error) {
