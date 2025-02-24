@@ -13,6 +13,7 @@ import { Menu, MenuLinks, MenuLogo } from "../Teste/TesteStyle";
 import Logo from "../../assets/logo.jpeg";
 import axios from "axios";
 
+
 const GestaoPesosProgresso = () => {
   const [aparelhos, setAparelhos] = useState([]);
   const [registro, setRegistro] = useState({
@@ -24,10 +25,16 @@ const GestaoPesosProgresso = () => {
   });
 
   useEffect(() => {
+    const idUsuario = localStorage.getItem("id"); // Obtendo ID do usuário
+    if (!idUsuario) {
+      console.error("Usuário não identificado.");
+      return;
+    }
+
     axios
-      .get("http://localhost:5000/aparelhos") // Ajuste a URL conforme necessário
+      .get(`http://localhost:5035/usuarios/${idUsuario}/aparelhos`) // Ajuste conforme o backend
       .then((response) => {
-        setAparelhos(response.data); // Supondo que o backend retorna um array de objetos { id, nome }
+        setAparelhos(response.data);
       })
       .catch((error) => {
         console.error("Erro ao buscar aparelhos:", error);
@@ -35,15 +42,37 @@ const GestaoPesosProgresso = () => {
   }, []);
 
   const adicionarRegistro = () => {
+    const idUsuario = localStorage.getItem("id");
+
     if (registro.aparelho && registro.pesoAtual && registro.metaPeso) {
-      setAparelhos([...aparelhos, registro]);
-      setRegistro({
-        aparelho: "",
-        pesoAtual: "",
-        metaPeso: "",
-        series: "",
-        repeticoes: "",
-      });
+      const novoRegistro = {
+        usuario_id: idUsuario, // Relaciona ao usuário
+        aparelho_id: registro.aparelho, // Salva o ID do aparelho, não o nome
+        pesoAtual: registro.pesoAtual,
+        metaPeso: registro.metaPeso,
+        series: registro.series,
+        repeticoes: registro.repeticoes,
+      };
+
+      axios
+        .post("http://localhost:5035/registros", novoRegistro) // Ajuste conforme o backend
+        .then(() => {
+          // Atualiza a lista de registros (não adiciona direto ao estado)
+          return axios.get(`http://localhost:5035/usuarios/${idUsuario}/registros`);
+        })
+        .then((response) => {
+          setAparelhos(response.data); // Atualiza a lista após a inserção
+          setRegistro({
+            aparelho: "",
+            pesoAtual: "",
+            metaPeso: "",
+            series: "",
+            repeticoes: "",
+          });
+        })
+        .catch((error) => {
+          console.error("Erro ao salvar registro:", error);
+        });
     }
   };
 
@@ -62,13 +91,11 @@ const GestaoPesosProgresso = () => {
         <InputGroup>
           <Select
             value={registro.aparelho}
-            onChange={(e) =>
-              setRegistro({ ...registro, aparelho: e.target.value })
-            }
+            onChange={(e) => setRegistro({ ...registro, aparelho: e.target.value })}
           >
             <option value="">Selecione um aparelho</option>
             {aparelhos.map((aparelho) => (
-              <option key={aparelho.id} value={aparelho.nome}>
+              <option key={aparelho.id} value={aparelho.id}>
                 {aparelho.nome}
               </option>
             ))}
@@ -77,33 +104,25 @@ const GestaoPesosProgresso = () => {
             type="number"
             placeholder="Peso Atual (kg)"
             value={registro.pesoAtual}
-            onChange={(e) =>
-              setRegistro({ ...registro, pesoAtual: e.target.value })
-            }
+            onChange={(e) => setRegistro({ ...registro, pesoAtual: e.target.value })}
           />
           <Input
             type="number"
             placeholder="Meta de Peso (kg)"
             value={registro.metaPeso}
-            onChange={(e) =>
-              setRegistro({ ...registro, metaPeso: e.target.value })
-            }
+            onChange={(e) => setRegistro({ ...registro, metaPeso: e.target.value })}
           />
           <Input
             type="number"
             placeholder="Número de Séries"
             value={registro.series}
-            onChange={(e) =>
-              setRegistro({ ...registro, series: e.target.value })
-            }
+            onChange={(e) => setRegistro({ ...registro, series: e.target.value })}
           />
           <Input
             type="number"
             placeholder="Número de Repetições"
             value={registro.repeticoes}
-            onChange={(e) =>
-              setRegistro({ ...registro, repeticoes: e.target.value })
-            }
+            onChange={(e) => setRegistro({ ...registro, repeticoes: e.target.value })}
           />
           <Button onClick={adicionarRegistro}>Salvar</Button>
         </InputGroup>
@@ -111,8 +130,7 @@ const GestaoPesosProgresso = () => {
           <Ul>
             {aparelhos.map((item, index) => (
               <li key={index}>
-                <strong>{item.aparelho}</strong>: {item.pesoAtual} kg → Meta:{" "}
-                {item.metaPeso} kg ({item.series}x{item.repeticoes})
+                <strong>{item.nome}</strong>: {item.pesoAtual} kg → Meta: {item.metaPeso} kg ({item.series}x{item.repeticoes})
               </li>
             ))}
           </Ul>
