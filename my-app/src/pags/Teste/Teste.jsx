@@ -27,11 +27,11 @@ const Teste = () => {
     // Verifica se o token está presente no localStorage
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      // Se não encontrar o token, redireciona para a tela de login
-      navigate("/login");
-    }
-    // Recupera o nome do usuário do localStorage
+    // if (!token) {
+    //   // Se não encontrar o token, redireciona para a tela de login
+    //   navigate("/");
+    // }
+    // // Recupera o nome do usuário do localStorage
     const nomeUsuario = localStorage.getItem("usuario");
     if (nomeUsuario) {
       setUsuario(nomeUsuario); // Atualiza o estado com o nome do usuário
