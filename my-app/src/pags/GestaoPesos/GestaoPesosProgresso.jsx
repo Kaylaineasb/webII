@@ -32,9 +32,9 @@ const GestaoPesosProgresso = () => {
     }
 
     axios
-      .get(`http://localhost:5035/usuarios/${idUsuario}/aparelhos`) // Ajuste conforme o backend
+      .get("http://localhost:5035/api/aparelhos")
       .then((response) => {
-        setAparelhos(response.data);
+        setAparelhos(response.data); // Array de objetos { id, nome }
       })
       .catch((error) => {
         console.error("Erro ao buscar aparelhos:", error);
@@ -42,26 +42,35 @@ const GestaoPesosProgresso = () => {
   }, []);
 
   const adicionarRegistro = () => {
-    const idUsuario = localStorage.getItem("id");
+    const usuarioId = localStorage.getItem("usuarioId");
+    if (!usuarioId) {
+      alert("Usuário não encontrado no localStorage");
+      return;
+    }
 
-    if (registro.aparelho && registro.pesoAtual && registro.metaPeso) {
-      const novoRegistro = {
-        usuario_id: idUsuario, // Relaciona ao usuário
-        aparelho_id: registro.aparelho, // Salva o ID do aparelho, não o nome
-        pesoAtual: registro.pesoAtual,
-        metaPeso: registro.metaPeso,
-        series: registro.series,
-        repeticoes: registro.repeticoes,
+    const aparelhoSelecionado = aparelhos.find(
+      (aparelho) => aparelho.nome === registro.aparelho
+    );
+
+    if (!aparelhoSelecionado) {
+      alert("Selecione um aparelho válido.");
+      return;
+    }
+
+    if (registro.pesoAtual && registro.metaPeso && registro.series && registro.repeticoes) {
+      const payload = {
+        usuarioIdFk: Number(usuarioId),
+        aparelhoIdFk: aparelhoSelecionado.id,
+        pesoAtual: Number(registro.pesoAtual),
+        pesoMeta: Number(registro.metaPeso),
+        nrSeries: Number(registro.series),
+        nrRepeticoes: Number(registro.repeticoes),
       };
 
       axios
-        .post("http://localhost:5035/registros", novoRegistro) // Ajuste conforme o backend
+        .post("http://localhost:5035/api/usuarios-aparelhos", payload)
         .then(() => {
-          // Atualiza a lista de registros (não adiciona direto ao estado)
-          return axios.get(`http://localhost:5035/usuarios/${idUsuario}/registros`);
-        })
-        .then((response) => {
-          setAparelhos(response.data); // Atualiza a lista após a inserção
+          alert("Registro salvo com sucesso!");
           setRegistro({
             aparelho: "",
             pesoAtual: "",
@@ -71,8 +80,10 @@ const GestaoPesosProgresso = () => {
           });
         })
         .catch((error) => {
-          console.error("Erro ao salvar registro:", error);
+          console.error("Erro ao salvar o registro:", error);
         });
+    } else {
+      alert("Preencha todos os campos.");
     }
   };
 
@@ -126,11 +137,12 @@ const GestaoPesosProgresso = () => {
           />
           <Button onClick={adicionarRegistro}>Salvar</Button>
         </InputGroup>
+
         <ListaAparelhos>
           <Ul>
             {aparelhos.map((item, index) => (
               <li key={index}>
-                <strong>{item.nome}</strong>: {item.pesoAtual} kg → Meta: {item.metaPeso} kg ({item.series}x{item.repeticoes})
+                <strong>{item.nome}</strong>
               </li>
             ))}
           </Ul>
