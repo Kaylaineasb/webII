@@ -29,7 +29,6 @@ const Login = () => {
       localStorage.setItem("token", result.token);
       localStorage.setItem("usuario", result.nome); 
       localStorage.setItem("usuarioId",result.usuarioId);
-
       navigate("/teste"); // Redireciona para a página principal
     } catch (error) {
       setError(error.message);

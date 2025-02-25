@@ -13,6 +13,7 @@ import { Menu, MenuLinks, MenuLogo } from "../Teste/TesteStyle";
 import Logo from "../../assets/logo.jpeg";
 import axios from "axios";
 
+
 const GestaoPesosProgresso = () => {
   const [aparelhos, setAparelhos] = useState([]);
   const [registro, setRegistro] = useState({
@@ -24,6 +25,12 @@ const GestaoPesosProgresso = () => {
   });
 
   useEffect(() => {
+    const idUsuario = localStorage.getItem("id"); // Obtendo ID do usuário
+    if (!idUsuario) {
+      console.error("Usuário não identificado.");
+      return;
+    }
+
     axios
       .get("http://localhost:5035/api/aparelhos")
       .then((response) => {
@@ -99,7 +106,7 @@ const GestaoPesosProgresso = () => {
           >
             <option value="">Selecione um aparelho</option>
             {aparelhos.map((aparelho) => (
-              <option key={aparelho.id} value={aparelho.nome}>
+              <option key={aparelho.id} value={aparelho.id}>
                 {aparelho.nome}
               </option>
             ))}
