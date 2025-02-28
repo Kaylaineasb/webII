@@ -12,6 +12,7 @@ import {
 import { Menu, MenuLinks, MenuLogo } from "../Teste/TesteStyle";
 import Logo from "../../assets/logo.jpeg";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 
 const GestaoPesosProgresso = () => {
@@ -91,9 +92,9 @@ const GestaoPesosProgresso = () => {
     <Container>
       <Menu>
         <MenuLinks>
-          <a href="#">Início</a>
-          <a href="#">Gestão de Aparelhos</a>
-          <a href="#">Gestão de Treinos</a>
+          <Link to="/">Início</Link>
+          <Link to="/teste">Gestão de Aparelhos</Link>
+          <Link to="/gestaoPesos">Gestão de Treinos</Link>
         </MenuLinks>
         <MenuLogo src={Logo} alt="Logo" />
       </Menu>
