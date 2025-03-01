@@ -1,48 +1,67 @@
-import { 
-  Button, 
-  Container, 
-  Input, 
-  InputGroup, 
-  ListaAparelhos, 
-  Select, 
-  Categoria, 
-  Ul, 
-  Menu, 
-  MenuLinks, 
-  MenuLogo, 
-  Wrapper 
+import axios from "axios";
+import {
+  Button,
+  Container,
+  Input,
+  InputGroup,
+  ListaAparelhos,
+  Select,
+  Categoria,
+  Ul,
+  Menu,
+  MenuLinks,
+  MenuLogo,
+  Wrapper
 } from "./TesteStyle";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Logo from '../../assets/logo.jpeg';
 import { useNavigate, Link } from "react-router-dom";
 
 const Teste = () => {
   const [aparelhos, setAparelhos] = useState([]);
-  const [novoAparelho, setNovoAparelho] = useState({ nome: "", categoria: "" });
+  const [novoAparelho, setNovoAparelho] = useState({ Nome: "", CategoriaId: "" });
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState("");
   const categorias = ["Superiores", "Inferiores", "Cardio"];
 
   useEffect(() => {
-    // Verifica se o token está presente no localStorage
-    const token = localStorage.getItem("token");
-
-    // if (!token) {
-    //   // Se não encontrar o token, redireciona para a tela de login
-    //   navigate("/");
-    // }
-    // // Recupera o nome do usuário do localStorage
     const nomeUsuario = localStorage.getItem("usuario");
     if (nomeUsuario) {
-      setUsuario(nomeUsuario); // Atualiza o estado com o nome do usuário
+      setUsuario(nomeUsuario);
     }
   }, [navigate]);
 
-  const adicionarAparelho = () => {
-    if (novoAparelho.nome && novoAparelho.categoria) {
-      setAparelhos([...aparelhos, novoAparelho]);
-      setNovoAparelho({ nome: "", categoria: "" });
+  const adicionarAparelho = async () => {
+    const token = localStorage.getItem("token");
+    if (novoAparelho.Nome && novoAparelho.categoria) {
+      // Mapeando a categoria de string para número
+      const categoriaIndex = categorias.indexOf(novoAparelho.categoria);
+      if (categoriaIndex !== -1) {
+        novoAparelho.categoria = categoriaIndex + 1; // Convertendo para número
+      }
+
+      try {
+        const payload = {
+          Nome: novoAparelho.Nome,
+          CategoriaId: novoAparelho.categoria // Usando o valor numérico
+        };
+         // Verificando se o ID da categoria foi mapeado corretamente
+
+        const response = await axios.post("http://localhost:5035/api/aparelhos", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Opcional, mas recomendado
+          },
+        });
+
+        // Atualizando a lista de aparelhos após sucesso
+        setAparelhos([...aparelhos, response.data]);
+        setNovoAparelho({ Nome: "", CategoriaId: "" }); // Resetando o estado após adicionar
+      } catch (error) {
+        console.error("Erro ao adicionar aparelho:", error);
+      }
     }
+    alert("Aparelho Cadastrado Com sucesso");
   };
 
   return (
@@ -57,13 +76,13 @@ const Teste = () => {
       </Menu>
       <Wrapper>
         <h2>Gestão de Aparelhos</h2>
-        {usuario && <h3>Oi, {usuario}, Bem vindo de volta!</h3>}
+        {usuario && <h3>Oi, {usuario}, Bem-vindo de volta!</h3>}
         <InputGroup>
           <Input
             type="text"
             placeholder="Nome do Aparelho"
-            value={novoAparelho.nome}
-            onChange={(e) => setNovoAparelho({ ...novoAparelho, nome: e.target.value })}
+            value={novoAparelho.Nome}
+            onChange={(e) => setNovoAparelho({ ...novoAparelho, Nome: e.target.value })}
           />
           <Select
             value={novoAparelho.categoria}

@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 
 const GestaoPesosProgresso = () => {
   const [aparelhos, setAparelhos] = useState([]);
+  const[listaUsuariosAparelhos,setListaUsuariosAparelhos] = useState([]);
   const [registro, setRegistro] = useState({
     aparelho: "",
     pesoAtual: "",
@@ -26,21 +27,38 @@ const GestaoPesosProgresso = () => {
   });
 
   useEffect(() => {
-    const idUsuario = localStorage.getItem("id"); // Obtendo ID do usuário
+    const idUsuario = localStorage.getItem("usuarioId");
+    const token = localStorage.getItem("token"); 
     if (!idUsuario) {
       console.error("Usuário não identificado.");
       return;
     }
-
+    axios
+    .get(`http://localhost:5035/api/usuarios-aparelhos/${idUsuario}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Passando o token no header da requisição
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      setListaUsuariosAparelhos(response.data); // Salva os aparelhos retornados na variável de estado
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar aparelhos do usuário:", error);
+    });
     axios
       .get("http://localhost:5035/api/aparelhos")
       .then((response) => {
+        console.log(response.data)
         setAparelhos(response.data); // Array de objetos { id, nome }
       })
       .catch((error) => {
         console.error("Erro ao buscar aparelhos:", error);
       });
+
   }, []);
+
+  
 
   const adicionarRegistro = () => {
     const usuarioId = localStorage.getItem("usuarioId");
@@ -48,11 +66,11 @@ const GestaoPesosProgresso = () => {
       alert("Usuário não encontrado no localStorage");
       return;
     }
-
+    //console.log(registro.aparelho)
     const aparelhoSelecionado = aparelhos.find(
-      (aparelho) => aparelho.nome === registro.aparelho
+      (aparelho) => aparelho.id == registro.aparelho
     );
-
+    console.log(aparelhoSelecionado)
     if (!aparelhoSelecionado) {
       alert("Selecione um aparelho válido.");
       return;
@@ -67,9 +85,16 @@ const GestaoPesosProgresso = () => {
         nrSeries: Number(registro.series),
         nrRepeticoes: Number(registro.repeticoes),
       };
-
+    
+      const token = localStorage.getItem("token");
+    
       axios
-        .post("http://localhost:5035/api/usuarios-aparelhos", payload)
+        .post("http://localhost:5035/api/usuarios-aparelhos", payload, {  headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Opcional, mas recomendado
+          },
+        
+        })
         .then(() => {
           alert("Registro salvo com sucesso!");
           setRegistro({
@@ -86,6 +111,7 @@ const GestaoPesosProgresso = () => {
     } else {
       alert("Preencha todos os campos.");
     }
+    
   };
 
   return (
@@ -140,14 +166,23 @@ const GestaoPesosProgresso = () => {
         </InputGroup>
 
         <ListaAparelhos>
-          <Ul>
-            {aparelhos.map((item, index) => (
-              <li key={index}>
-                <strong>{item.nome}</strong>
-              </li>
-            ))}
-          </Ul>
-        </ListaAparelhos>
+  <Ul>
+    {listaUsuariosAparelhos.length > 0 ? (
+      listaUsuariosAparelhos.map((item, index) => (
+        <li key={index}>
+          <strong>{item.nomeAparelho}</strong> <br />
+          <span>Peso Atual: {item.pesoAtual} kg</span> <br />
+          <span>Peso Meta: {item.pesoMeta} kg</span> <br />
+          <span>Séries: {item.nrSeries}</span> <br />
+          <span>Repetições: {item.nrRepeticoes}</span>
+        </li>
+      ))
+    ) : (
+      <p>Nenhum aparelho cadastrado para esse usuário.</p>
+    )}
+  </Ul>
+</ListaAparelhos>
+
       </Wrapper>
     </Container>
   );
