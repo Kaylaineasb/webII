@@ -14,10 +14,9 @@ import Logo from "../../assets/logo.jpeg";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-
 const GestaoPesosProgresso = () => {
   const [aparelhos, setAparelhos] = useState([]);
-  const[listaUsuariosAparelhos,setListaUsuariosAparelhos] = useState([]);
+  const [listaUsuariosAparelhos, setListaUsuariosAparelhos] = useState([]);
   const [registro, setRegistro] = useState({
     aparelho: "",
     pesoAtual: "",
@@ -28,37 +27,34 @@ const GestaoPesosProgresso = () => {
 
   useEffect(() => {
     const idUsuario = localStorage.getItem("usuarioId");
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
     if (!idUsuario) {
       console.error("Usuário não identificado.");
       return;
     }
     axios
-    .get(`http://localhost:5035/api/usuarios-aparelhos/${idUsuario}`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // Passando o token no header da requisição
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-      setListaUsuariosAparelhos(response.data); // Salva os aparelhos retornados na variável de estado
-    })
-    .catch((error) => {
-      console.error("Erro ao buscar aparelhos do usuário:", error);
-    });
+      .get(`http://localhost:5035/api/usuarios-aparelhos/${idUsuario}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Passando o token no header da requisição
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setListaUsuariosAparelhos(response.data); // Salva os aparelhos retornados na variável de estado
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar aparelhos do usuário:", error);
+      });
     axios
       .get("http://localhost:5035/api/aparelhos")
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         setAparelhos(response.data); // Array de objetos { id, nome }
       })
       .catch((error) => {
         console.error("Erro ao buscar aparelhos:", error);
       });
-
   }, []);
-
-  
 
   const adicionarRegistro = () => {
     const usuarioId = localStorage.getItem("usuarioId");
@@ -70,13 +66,18 @@ const GestaoPesosProgresso = () => {
     const aparelhoSelecionado = aparelhos.find(
       (aparelho) => aparelho.id == registro.aparelho
     );
-    console.log(aparelhoSelecionado)
+    console.log(aparelhoSelecionado);
     if (!aparelhoSelecionado) {
       alert("Selecione um aparelho válido.");
       return;
     }
 
-    if (registro.pesoAtual && registro.metaPeso && registro.series && registro.repeticoes) {
+    if (
+      registro.pesoAtual &&
+      registro.metaPeso &&
+      registro.series &&
+      registro.repeticoes
+    ) {
       const payload = {
         usuarioIdFk: Number(usuarioId),
         aparelhoIdFk: aparelhoSelecionado.id,
@@ -85,15 +86,15 @@ const GestaoPesosProgresso = () => {
         nrSeries: Number(registro.series),
         nrRepeticoes: Number(registro.repeticoes),
       };
-    
+
       const token = localStorage.getItem("token");
-    
+
       axios
-        .post("http://localhost:5035/api/usuarios-aparelhos", payload, {  headers: {
+        .post("http://localhost:5035/api/usuarios-aparelhos", payload, {
+          headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json", // Opcional, mas recomendado
           },
-        
         })
         .then(() => {
           alert("Registro salvo com sucesso!");
@@ -111,7 +112,6 @@ const GestaoPesosProgresso = () => {
     } else {
       alert("Preencha todos os campos.");
     }
-    
   };
 
   return (
@@ -129,7 +129,9 @@ const GestaoPesosProgresso = () => {
         <InputGroup>
           <Select
             value={registro.aparelho}
-            onChange={(e) => setRegistro({ ...registro, aparelho: e.target.value })}
+            onChange={(e) =>
+              setRegistro({ ...registro, aparelho: e.target.value })
+            }
           >
             <option value="">Selecione um aparelho</option>
             {aparelhos.map((aparelho) => (
@@ -142,47 +144,54 @@ const GestaoPesosProgresso = () => {
             type="number"
             placeholder="Peso Atual (kg)"
             value={registro.pesoAtual}
-            onChange={(e) => setRegistro({ ...registro, pesoAtual: e.target.value })}
+            onChange={(e) =>
+              setRegistro({ ...registro, pesoAtual: e.target.value })
+            }
           />
           <Input
             type="number"
             placeholder="Meta de Peso (kg)"
             value={registro.metaPeso}
-            onChange={(e) => setRegistro({ ...registro, metaPeso: e.target.value })}
+            onChange={(e) =>
+              setRegistro({ ...registro, metaPeso: e.target.value })
+            }
           />
           <Input
             type="number"
             placeholder="Número de Séries"
             value={registro.series}
-            onChange={(e) => setRegistro({ ...registro, series: e.target.value })}
+            onChange={(e) =>
+              setRegistro({ ...registro, series: e.target.value })
+            }
           />
           <Input
             type="number"
             placeholder="Número de Repetições"
             value={registro.repeticoes}
-            onChange={(e) => setRegistro({ ...registro, repeticoes: e.target.value })}
+            onChange={(e) =>
+              setRegistro({ ...registro, repeticoes: e.target.value })
+            }
           />
           <Button onClick={adicionarRegistro}>Salvar</Button>
         </InputGroup>
 
         <ListaAparelhos>
-  <Ul>
-    {listaUsuariosAparelhos.length > 0 ? (
-      listaUsuariosAparelhos.map((item, index) => (
-        <li key={index}>
-          <strong>{item.nomeAparelho}</strong> <br />
-          <span>Peso Atual: {item.pesoAtual} kg</span> <br />
-          <span>Peso Meta: {item.pesoMeta} kg</span> <br />
-          <span>Séries: {item.nrSeries}</span> <br />
-          <span>Repetições: {item.nrRepeticoes}</span>
-        </li>
-      ))
-    ) : (
-      <p>Nenhum aparelho cadastrado para esse usuário.</p>
-    )}
-  </Ul>
-</ListaAparelhos>
-
+          <Ul>
+            {listaUsuariosAparelhos.length > 0 ? (
+              listaUsuariosAparelhos.map((item, index) => (
+                <li key={index}>
+                  <strong>{item.nomeAparelho}</strong> <br />
+                  <span>Peso Atual: {item.pesoAtual} kg</span> <br />
+                  <span>Peso Meta: {item.pesoMeta} kg</span> <br />
+                  <span>Séries: {item.nrSeries}</span> <br />
+                  <span>Repetições: {item.nrRepeticoes}</span>
+                </li>
+              ))
+            ) : (
+              <p>Nenhum aparelho cadastrado para esse usuário.</p>
+            )}
+          </Ul>
+        </ListaAparelhos>
       </Wrapper>
     </Container>
   );
