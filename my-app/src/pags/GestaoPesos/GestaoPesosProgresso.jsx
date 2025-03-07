@@ -98,13 +98,7 @@ const GestaoPesosProgresso = () => {
         })
         .then(() => {
           alert("Registro salvo com sucesso!");
-          setRegistro({
-            aparelho: "",
-            pesoAtual: "",
-            metaPeso: "",
-            series: "",
-            repeticoes: "",
-          });
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Erro ao salvar o registro:", error);

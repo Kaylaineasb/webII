@@ -3,12 +3,10 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
   align-items: center;
   justify-content: center;
   background: black;
   color: white;
-  overflow: auto;
 
   h2 {
     margin-bottom: 20px;
@@ -26,6 +24,7 @@ export const Wrapper = styled.div`
   align-items: center;
   width: 100%;
   max-width: 800px;
+  margin-top:100px;
 `;
 
 export const FormGroup = styled.div`
@@ -108,8 +107,6 @@ export const ListaAparelhos = styled.div`
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  max-height: 300px;
-  overflow-y: auto;
 `;
 
 export const Ul = styled.ul`
